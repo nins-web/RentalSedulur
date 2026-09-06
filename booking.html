@@ -189,38 +189,43 @@
         });
 
         // Fungsi Generate Pesan WhatsApp
-        function kirimWhatsApp(event) {
-            event.preventDefault(); // Mencegah halaman reload
-            
-            // Mengambil nilai dari form
-            const nama = document.getElementById('nama').value;
-            const konsol = document.getElementById('pilihanUnit').value;
-            const tanggal = document.getElementById('tanggal').value;
-            const durasi = document.getElementById('durasi').value;
-            const catatan = document.getElementById('catatan').value;
+        async function kirimWhatsApp(event) {
+    event.preventDefault();
 
-            // Nomor WA Tujuan (Ganti dengan nomor admin rental Anda, gunakan kode negara 62)
-            const nomorAdmin = "6281234567890"; 
+    const formData = {
+        nama: document.getElementById('nama').value,
+        nomorWa: document.getElementById('nomorWa').value,
+        konsol: document.getElementById('pilihanUnit').value,
+        tanggal: document.getElementById('tanggal').value,
+        durasi: document.getElementById('durasi').value,
+        catatan: document.getElementById('catatan').value
+    };
 
-            // Merangkai teks pesan
-            let pesan = `Halo Admin Rental Sedulur, saya mau booking:\n\n`;
-            pesan += `*Nama:* ${nama}\n`;
-            pesan += `*Konsol:* ${konsol}\n`;
-            pesan += `*Tanggal Ambil:* ${tanggal}\n`;
-            pesan += `*Durasi:* ${durasi} Hari\n`;
-            
-            if(catatan) {
-                pesan += `*Catatan:* ${catatan}\n`;
-            }
-            
-            pesan += `\nMohon konfirmasi ketersediaannya ya. Terima kasih!`;
+    // Indikator loading (opsional, profesional touch)
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    submitBtn.innerText = "Memproses Booking...";
+    submitBtn.disabled = true;
 
-            // Membuat URL API WhatsApp
-            const waUrl = `https://wa.me/${nomorAdmin}?text=${encodeURIComponent(pesan)}`;
-            
-            // Membuka tab baru ke WhatsApp
-            window.open(waUrl, '_blank');
-        }
+    try {
+        // Kirim ke Google Apps Script Web App URL Anda
+        await fetch('https://script.google.com/macros/s/URL_WEB_APP_ANDA/exec', {
+            method: 'POST',
+            mode: 'no-cors', // Diperlukan untuk GAS Web App sederhana
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+
+        // Setelah data masuk spreadsheet, arahkan ke WhatsApp Admin
+        const nomorAdmin = "6281289538855";
+        let pesan = `Halo Admin, saya ${formData.nama} ingin booking ${formData.konsol} selama ${formData.durasi} hari mulai tanggal ${formData.tanggal}.`;
+        window.open(`https://wa.me/${nomorAdmin}?text=${encodeURIComponent(pesan)}`, '_blank');
+
+    } catch (error) {
+        alert('Terjadi kesalahan koneksi.');
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Konfirmasi via WhatsApp";
+    }
+}
     </script>
 </body>
 </html>
