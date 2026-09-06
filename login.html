@@ -34,7 +34,7 @@
             
             <p id="error-msg" class="text-red-500 text-xs font-semibold hidden text-center">Username atau Password salah!</p>
 
-            <button type="submit" class="w-full bg-black text-white font-bold py-4 rounded-xl shadow-md hover:bg-gray-800 transition-colors mt-4">
+            <button type="submit" id="loginBtn" class="w-full bg-black text-white font-bold py-4 rounded-xl shadow-md hover:bg-gray-800 transition-colors mt-4">
                 Masuk ke Panel
             </button>
         </form>
@@ -44,22 +44,44 @@
 
     <script>
         // Cek jika sudah login, langsung lempar ke admin
-        if(localStorage.getItem("isLoggedIn") === "true") {
+        if(localStorage.getItem("adminToken")) {
             window.location.href = "admin.html";
         }
 
-        function prosesLogin(event) {
+        async function prosesLogin(event) {
             event.preventDefault();
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-msg');
+            const loginBtn = document.getElementById('loginBtn');
 
-            // Simulasi Login (Hardcoded untuk prototype frontend)
-            // Di sistem asli, ini akan mengecek ke database
-            if(user === "admin" && pass === "rahasia123") {
-                localStorage.setItem("isLoggedIn", "true");
-                window.location.href = "admin.html";
-            } else {
-                document.getElementById('error-msg').classList.remove('hidden');
+            errorMsg.classList.add('hidden');
+            loginBtn.innerText = "Memproses...";
+            loginBtn.disabled = true;
+
+            try {
+                // Ganti URL di bawah ini dengan URL Web App Google Apps Script Anda
+                const response = await fetch('URL_WEB_APP_GOOGLE_APPS_SCRIPT_ANDA', {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "login", username: user, password: pass })
+                });
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    // Simpan token aman dari server Google Apps Script
+                    localStorage.setItem("adminToken", result.token);
+                    window.location.href = "admin.html";
+                } else {
+                    errorMsg.innerText = result.message || "Username atau Password salah!";
+                    errorMsg.classList.remove('hidden');
+                    loginBtn.innerText = "Masuk ke Panel";
+                    loginBtn.disabled = false;
+                }
+            } catch (error) {
+                errorMsg.innerText = "Gagal terhubung ke server database.";
+                errorMsg.classList.remove('hidden');
+                loginBtn.innerText = "Masuk ke Panel";
+                loginBtn.disabled = false;
             }
         }
     </script>
