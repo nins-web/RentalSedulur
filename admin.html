@@ -49,24 +49,12 @@
 <body class="text-gray-900 antialiased overflow-x-hidden">
 
     <!-- Navigasi -->
-    <nav class="glass fixed w-full z-50 border-b border-gray-200/50 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex-shrink-0 flex items-center gap-3">
-                    <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center shadow-md">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 11V9a2 2 0 00-2-2H7a2 2 0 00-2 2v2M21 12c0 3.866-3 7-7 7H9.5c-2.5 0-5.5-2.5-5.5-5.5C4 10.5 7 8 9.5 8H14c4 0 7 3.134 7 7z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11h.01M18 11h.01M16.5 13h.01"></path></svg>
-                    </div>
-                    <span class="font-semibold text-xl tracking-tight text-black">Admin Sedulur</span>
-                </div>
-                <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-500">
-                    <a href="index.html" class="hover:text-black transition">Dashboard</a>
-                    <a href="katalog.html" class="hover:text-black transition">Katalog PS</a>
-                    <a href="booking.html" class="hover:text-black transition">Booking</a>
-                    <a href="admin.html" class="text-black transition">Panel Admin</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
+    <span class="text-gray-500">Halo, Admin!</span>
+    <button onclick="prosesLogout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full transition-colors">
+        Keluar (Logout)
+    </button>
+</div>
 
     <!-- Hero Section -->
     <div class="pt-32 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
@@ -202,6 +190,10 @@
             }, { root: null, rootMargin: '0px', threshold: 0.1 });
             document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
         });
+        function prosesLogout() {
+    localStorage.removeItem("isLoggedIn");
+    window.location.href = "login.html";
+}
     </script>
 </body>
 </html>
