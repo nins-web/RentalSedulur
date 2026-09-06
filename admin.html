@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin | Rental Sedulur</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f5f5f7; 
+        }
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+        }
+        .apple-input {
+            background-color: rgba(0, 0, 0, 0.04);
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .apple-input:focus {
+            background-color: #fff;
+            border-color: #007aff;
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+            outline: none;
+        }
+    </style>
+</head>
+<body class="text-gray-900 antialiased overflow-x-hidden">
+
+    <!-- Navigasi -->
+    <nav class="glass fixed w-full z-50 border-b border-gray-200/50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center shadow-md">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 11V9a2 2 0 00-2-2H7a2 2 0 00-2 2v2M21 12c0 3.866-3 7-7 7H9.5c-2.5 0-5.5-2.5-5.5-5.5C4 10.5 7 8 9.5 8H14c4 0 7 3.134 7 7z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11h.01M18 11h.01M16.5 13h.01"></path></svg>
+                    </div>
+                    <span class="font-semibold text-xl tracking-tight text-black">Admin Sedulur</span>
+                </div>
+                <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-500">
+                    <a href="index.html" class="hover:text-black transition">Dashboard</a>
+                    <a href="katalog.html" class="hover:text-black transition">Katalog PS</a>
+                    <a href="booking.html" class="hover:text-black transition">Booking</a>
+                    <a href="admin.html" class="text-black transition">Panel Admin</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="pt-32 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-black mb-4 fade-in-up">
+            Kendali Penuh Operasional.
+        </h1>
+        <p class="text-lg text-gray-500 max-w-xl mx-auto fade-in-up delay-100">
+            Kelola stok konsol, catat pembayaran masuk, dan pantau laporan transaksi penyewaan PlayStation.
+        </p>
+    </div>
+
+    <!-- Panel Admin Konten -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Kolom Kiri: Manajemen Stok & Form Pembayaran -->
+            <div class="lg:col-span-1 space-y-8 fade-in-up delay-100">
+                
+                <!-- Update Stok Unit -->
+                <div class="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6">Update Stok Unit</h2>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">PlayStation 5</p>
+                                <p class="text-xs text-green-600 font-medium">Tersedia: 4</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button class="w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-gray-100">-</button>
+                                <button class="w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-gray-100">+</button>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">PlayStation 4 Pro</p>
+                                <p class="text-xs text-red-500 font-medium">Tersedia: 0</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button class="w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-gray-100">-</button>
+                                <button class="w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-gray-100">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Catat Pembayaran -->
+                <div class="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6">Catat Pembayaran</h2>
+                    <form onsubmit="event.preventDefault(); alert('Pembayaran berhasil dicatat!');" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-2">ID Booking / Nama Penyewa</label>
+                            <input type="text" required class="apple-input w-full rounded-xl px-4 py-2.5 text-sm text-gray-900" placeholder="Misal: Trx #1030 (Andi)">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-2">Jumlah Bayar (Rp)</label>
+                            <input type="number" required class="apple-input w-full rounded-xl px-4 py-2.5 text-sm text-gray-900" placeholder="150000">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-2">Status Pembayaran</label>
+                            <select class="apple-input w-full rounded-xl px-4 py-2.5 text-sm text-gray-900 appearance-none">
+                                <option value="Lunas">Lunas (Transfer/Cash)</option>
+                                <option value="DP">DP (Uang Muka)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-black text-white font-bold py-3 rounded-xl hover:bg-gray-800 transition-colors text-sm">
+                            Simpan Pembayaran
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+            <!-- Kolom Kanan: Laporan Transaksi -->
+            <div class="lg:col-span-2 fade-in-up delay-200">
+                <div class="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 h-full">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-900">Laporan Transaksi Terkini</h2>
+                        <button class="text-blue-500 text-sm font-semibold hover:underline">Unduh Laporan</button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-left border-collapse">
+                            <thead>
+                                <tr class="text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                                    <th class="pb-3 font-semibold">ID Trx</th>
+                                    <th class="pb-3 font-semibold">Penyewa</th>
+                                    <th class="pb-3 font-semibold">Item</th>
+                                    <th class="pb-3 font-semibold">Total</th>
+                                    <th class="pb-3 font-semibold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm">
+                                <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                                    <td class="py-4 text-gray-900 font-medium">#1029</td>
+                                    <td class="py-4 text-gray-600">Budi Santoso</td>
+                                    <td class="py-4 text-gray-600">PS5 (2 Hari)</td>
+                                    <td class="py-4 text-gray-900 font-medium">Rp 300.000</td>
+                                    <td class="py-4"><span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full">Lunas</span></td>
+                                </tr>
+                                <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                                    <td class="py-4 text-gray-900 font-medium">#1030</td>
+                                    <td class="py-4 text-gray-600">Agus Setiawan</td>
+                                    <td class="py-4 text-gray-600">PS4 Pro (1 Hari)</td>
+                                    <td class="py-4 text-gray-900 font-medium">Rp 100.000</td>
+                                    <td class="py-4"><span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded-full">DP 50k</span></td>
+                                </tr>
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-4 text-gray-900 font-medium">#1031</td>
+                                    <td class="py-4 text-gray-600">Citra Kirana</td>
+                                    <td class="py-4 text-gray-600">DualSense (3 Hari)</td>
+                                    <td class="py-4 text-gray-900 font-medium">Rp 90.000</td>
+                                    <td class="py-4"><span class="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">Belum Bayar</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Script Animasi -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { root: null, rootMargin: '0px', threshold: 0.1 });
+            document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>
