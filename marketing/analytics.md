@@ -1,19 +1,19 @@
-# Analytics Tracking Plan (via marketingskills/analytics + plausible 28k⭐)
+# Analytics Tracking Plan — FREE Stack (Umami 38k⭐ + Vercel Analytics + GA4)
 
-## Decisions
-Berapa booking dari Google vs IG? Paket mana paling laku? Tanggal mana bentrok paling sering?
+## Kenapa ganti Plausible?
+Plausible 28k⭐ bagus tapi cloud berbayar ($9/bulan). Ganti ke **FREE**:
 
-## Events (Object-Action)
-page_viewed | unit_card_clicked | booking_form_started | booking_date_selected | booking_bentrok_shown | booking_submitted | wa_clicked | wa_prefill_sent
+1. **Umami 38.6k⭐ (umami-software/umami)** — MIT, privacy-first, no cookie, self-host atau cloud.umami.is **GRATIS** untuk 1 website + 10k event/bulan
+   - Setup: daftar di cloud.umami.is → copy `data-website-id` → paste di `app/layout.tsx`
+   - Atau self-host di VPS 43.173.10.5 via Docker (1 command)
 
-## Props
-unit_id, paket, tgl_mulai, tgl_selesai, total, source (utm_source)
+2. **Vercel Analytics (free tier)** — sudah include di Next.js via `@vercel/analytics`, auto track Web Vitals, gratis di hobby plan
 
-## Implementation
-- Plausible script di layout.tsx (privacy-first, no cookie)
-- GA4 via GTM jika mau ads nanti
-- Dub UTM: wa.me/6281289538855?text=...&utm_source=instagram
+3. **GA4 (opsional, free)** — uncomment di layout jika mau iklan Google nanti
 
-## Naming
-button_clicked { button: "wa_admin_header" }
-form_submitted { form: "booking", unit_id: "SD-PS4-01" }
+## Events tetap sama
+page_viewed, unit_card_clicked, booking_form_started, booking_bentrok_shown, booking_submitted, wa_clicked + utm_source per kota (Dub 24k⭐)
+
+## Cara aktifkan (2 menit)
+- Umami: daftar → ganti `rental-sedulur-free-id` di layout.tsx dengan ID asli → push → Vercel deploy → cek di cloud.umami.is dashboard
+- Vercel: sudah aktif via `<Analytics />`, cek di Vercel Dashboard → Analytics

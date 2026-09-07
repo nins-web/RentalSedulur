@@ -1,4 +1,5 @@
 import './globals.css'
+import { Analytics } from '@vercel/analytics/react'
 export const metadata = {
   title: {
     default: 'Rental Sedulur - Rental PS4 & PS3 Mojokerto | 8 Unit, Paket Malam 75k',
@@ -24,8 +25,12 @@ export default function RootLayout({children}:{children:React.ReactNode}){
   return (
     <html lang="id">
       <head>
-        {/* Plausible Analytics - privacy-first, 28k⭐ (plausible/analytics) */}
-        <script defer data-domain="rental-sedulur.vercel.app" src="https://plausible.io/js/script.js"></script>
+        {/* Umami Analytics — 38.6k⭐ FREE (umami-software/umami) — privacy-first, self-host or cloud.umami.is free tier */}
+        {/* Ganti data-website-id dengan ID dari cloud.umami.is (gratis) atau URL self-host */}
+        <script defer src="https://cloud.umami.is/script.js" data-website-id="rental-sedulur-free-id"></script>
+        {/* Google Analytics 4 — FREE (opsional, isi G-XXXX) — uncomment jika punya */}
+        {/* <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+        <script dangerouslySetInnerHTML={{__html: "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-XXXXXXXXXX');"}} /> */}
         {/* LocalBusiness Schema */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify({
           "@context":"https://schema.org",
@@ -39,7 +44,7 @@ export default function RootLayout({children}:{children:React.ReactNode}){
           "url":"https://rental-sedulur.vercel.app"
         })}} />
       </head>
-      <body className="bg-[#F8FAFC] text-[#0F172A] min-h-screen antialiased font-body">{children}</body>
+      <body className="bg-[#F8FAFC] text-[#0F172A] min-h-screen antialiased font-body">{children}<Analytics /></body>
     </html>
   )
 }
