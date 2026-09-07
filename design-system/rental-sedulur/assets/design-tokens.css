@@ -1,0 +1,65 @@
+/* Rental Sedulur Design Tokens — Generated from MASTER.md */
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@500;600&display=swap');
+
+:root {
+  /* Light Theme (default) */
+  --color-primary: #7C3AED;
+  --color-on-primary: #FFFFFF;
+  --color-secondary: #A78BFA;
+  --color-on-secondary: #0F172A;
+  --color-accent: #25D366; /* WA Green */
+  --color-accent-alt: #F43F5E; /* Paket malam */
+  --color-background: #F8FAFC;
+  --color-foreground: #0F172A;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #0F172A;
+  --color-muted: #F1F5F9;
+  --color-muted-foreground: #64748B;
+  --color-border: #E2E8F0;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-destructive: #EF4444;
+  --color-on-destructive: #FFFFFF;
+  --color-ring: #7C3AED;
+
+  /* Dark Hero */
+  --color-background-dark: #0F0F23;
+  --color-foreground-dark: #E2E8F0;
+  --color-card-dark: #1E1C35;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 24px rgba(0,0,0,0.12);
+  --shadow-neon: 0 0 20px rgba(124,58,237,0.3);
+
+  /* Typography */
+  --font-display: 'Russo One', sans-serif;
+  --font-heading: 'Chakra Petch', sans-serif;
+  --font-body: 'Chakra Petch', sans-serif;
+  --font-label: 'Inter', sans-serif;
+}
+
+/* Dark hero helper */
+.dark-hero {
+  background: var(--color-background-dark);
+  color: var(--color-foreground-dark);
+}
+
+/* Utility for price */
+.price { font-family: var(--font-heading); font-weight: 700; }

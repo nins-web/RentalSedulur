@@ -15,7 +15,7 @@ function BookingForm(){
   const [wa,setWa]=useState('')
   const [total,setTotal]=useState(0)
   const [msg,setMsg]=useState('')
-  useEffect(()=>{ supabase.from('units').select('*').order('id').then(({data})=>{ if(data){ setUnits(data); const q=sp.get('unit'); if(q) setUnitId(q)} }) },[sp])
+  useEffect(()=>{ supabase.from('units').select('*').order('id').then(({data}: any)=>{ if(data){ setUnits(data); const q=sp.get('unit'); if(q) setUnitId(q)} }) },[sp])
   useEffect(()=>{
     const u = units.find(x=>x.id===unitId)
     if(!u || !tglMulai || !tglSelesai) { setTotal(0); return }

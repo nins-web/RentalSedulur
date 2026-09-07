@@ -1,4 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@500;600&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-* { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+
+:root {
+  --color-primary: #7C3AED;
+  --color-on-primary: #FFFFFF;
+  --color-secondary: #A78BFA;
+  --color-accent: #25D366;
+  --color-accent-alt: #F43F5E;
+  --color-background: #F8FAFC;
+  --color-foreground: #0F172A;
+  --color-card: #FFFFFF;
+  --color-muted: #F1F5F9;
+  --color-muted-foreground: #64748B;
+  --color-border: #E2E8F0;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-destructive: #EF4444;
+  --color-ring: #7C3AED;
+  --color-background-dark: #0F0F23;
+  --color-foreground-dark: #E2E8F0;
+}
+
+* { font-family: 'Chakra Petch', system-ui, -apple-system, sans-serif; }
+.font-display { font-family: 'Russo One', sans-serif; }
+.font-heading { font-family: 'Chakra Petch', sans-serif; }
+.font-label { font-family: 'Inter', sans-serif; }
+
+*:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
