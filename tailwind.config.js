@@ -3,9 +3,3 @@ module.exports = {
   theme: { extend: {} },
   plugins: [],
 }
-
-
-FILE 8: postcss.config.js
-https://github.com/nins-web/RentalSedulur/new/main?filename=postcss.config.js
-js
-module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } }
