@@ -1,0 +1,31 @@
+version: '3'
+services:
+  umami-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: umami_pass_ganti_ini
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U umami"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    environment:
+      DATABASE_URL: postgresql://umami:umami_pass_ganti_ini@umami-db:5432/umami
+      HASH_SALT: ganti_random_string_32_char
+    ports:
+      - "3002:3000"
+    depends_on:
+      umami-db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  db-data:
