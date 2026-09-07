@@ -48,7 +48,7 @@ export default async function Page() {
           <p className="mt-4 text-lg text-[#94A3B8] max-w-2xl">Rental Sedulur — {ps4Count} unit PS4 + {ps3Count} unit PS3. Stik 2, game update, antar sampai rumah. Paket malam <span className="text-[#F43F5E] font-bold">hemat 40%</span>.</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="#katalog" className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white px-8 py-3.5 rounded-xl font-semibold transition cursor-pointer shadow-[0_0_20px_rgba(124,58,237,0.4)]">Lihat Unit Tersedia ↓</a>
-            <a href="https://wa.me/6281289538855?text=Halo%20kak%20mau%20tanya%20rental%20PS" target="_blank" className="bg-[#25D366] hover:bg-[#1DA851] text-white px-8 py-3.5 rounded-xl font-semibold transition cursor-pointer flex items-center gap-2">WA Admin 0812-8953-8855</a>
+            <a href="https://wa.me/6281289538855?text=Halo%20kak%20mau%20tanya%20rental%20PS&utm_source=homepage&utm_medium=wa&utm_campaign=rental_sedulur" target="_blank" className="bg-[#25D366] hover:bg-[#1DA851] text-white px-8 py-3.5 rounded-xl font-semibold transition cursor-pointer flex items-center gap-2">WA Admin 0812-8953-8855</a>
           </div>
           <div className="mt-6 flex flex-wrap gap-6 text-sm text-[#94A3B8] font-label">
             <span>✓ Antar Gratis Kota</span><span>✓ Booking Anti Bentrok</span><span>✓ Bayar di Tempat</span>
@@ -105,7 +105,7 @@ export default async function Page() {
             <h3 className="font-display text-xl mt-2">MAIN SEMALAMAN, BAYAR SETENGAH HARGA</h3>
             <p className="text-sm text-[#64748B] mt-1">Jam 19:00 - 07:00 • PS4 cuma <b className="text-[#F43F5E]">75k</b> (dari 130k) • PS3 cuma <b className="text-[#F43F5E]">50k</b> (dari 100k) • Hemat 42-50%</p>
           </div>
-          <a href="https://wa.me/6281289538855?text=Halo%20mau%20paket%20malam" target="_blank" className="bg-[#F43F5E] hover:bg-[#E11D48] text-white px-8 py-3 rounded-xl font-bold whitespace-nowrap transition cursor-pointer">Ambil Paket Malam →</a>
+          <a href="https://wa.me/6281289538855?text=Halo%20mau%20paket%20malam&utm_source=paket_malam&utm_medium=wa" target="_blank" className="bg-[#F43F5E] hover:bg-[#E11D48] text-white px-8 py-3 rounded-xl font-bold whitespace-nowrap transition cursor-pointer">Ambil Paket Malam →</a>
         </div>
 
         <p className="mt-10 text-xs text-[#94A3B8] text-center">Anti double-booking aktif per unit_id + overlap tanggal • Design System: <code className="bg-[#F1F5F9] px-2 py-1 rounded">design-system/rental-sedulur/MASTER.md</code> • Deploy Vercel iad1</p>
