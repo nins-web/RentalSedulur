@@ -63,11 +63,16 @@ function PriceCard({ label, value, highlight }: { label: string; value: string; 
 
 export default async function Page() {
   let units: any[] | null = null
+  let bookings: any[] = []
   try {
     const { data } = await supabase.from('units').select('*').order('id')
     units = data && data.length > 0 ? data : FALLBACK_UNITS
+    const { data: b } = await supabase.from('bookings').select('unit_id,tgl_mulai,tgl_selesai,status').in('status', ['pending','confirmed']).gte('tgl_selesai', new Date().toISOString().slice(0,10))
+    bookings = b || []
   } catch { units = FALLBACK_UNITS }
   if (!units) units = FALLBACK_UNITS
+  const isBooked = (id:string) => bookings.some((b:any)=> b.unit_id===id)
+  const getBooking = (id:string) => bookings.find((b:any)=> b.unit_id===id)
 
   const ps4Count = units.filter(u => u.tipe === 'PS4').length
   const ps3Count = units.filter(u => u.tipe === 'PS3').length
@@ -128,7 +133,7 @@ export default async function Page() {
                     border: '1px solid rgba(255,255,255,0.4)',
                     boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.5)'
                   }}>{u.tipe}</span>
-                  <span className="absolute top-3 right-3 bg-[#10B981] text-white text-xs font-label px-2.5 py-1 rounded-full shadow" style={{boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.5)'}}>● Tersedia</span>
+                  {isBooked(u.id) ? <span className="absolute top-3 right-3 text-white text-xs font-label px-2.5 py-1 rounded-full shadow" style={{background: 'linear-gradient(135deg, #F59E0B, #FF69B4)', border: '1px solid #C0C0C0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)'}}>● Dibooking {getBooking(u.id)?.tgl_mulai.slice(5).replace('-','/')}</span> : <span className="absolute top-3 right-3 bg-[#10B981] text-white text-xs font-label px-2.5 py-1 rounded-full shadow" style={{boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.5)'}}>● Tersedia</span>}
                 </div>
                 <div className="p-4">
                   <h3 className="font-heading font-bold text-lg">{u.id}</h3>
