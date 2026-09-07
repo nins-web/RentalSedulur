@@ -27,7 +27,7 @@ export default function RootLayout({children}:{children:React.ReactNode}){
       <head>
         {/* Umami Analytics — 38.6k⭐ FREE (umami-software/umami) — privacy-first, self-host or cloud.umami.is free tier */}
         {/* Ganti data-website-id dengan ID dari cloud.umami.is (gratis) atau URL self-host */}
-        <script defer src="https://cloud.umami.is/script.js" data-website-id="rental-sedulur-free-id"></script>
+        <script defer src="https://cloud.umami.is/script.js" data-website-id="cb838ea4-7a3a-49fc-9097-36e232e64280"></script>
         {/* Google Analytics 4 — FREE (opsional, isi G-XXXX) — uncomment jika punya */}
         {/* <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
         <script dangerouslySetInnerHTML={{__html: "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-XXXXXXXXXX');"}} /> */}
