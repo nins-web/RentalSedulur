@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import AdminActions from './actions'
 export const revalidate = 0
 export default async function Admin(){
   const {data: bookings} = await supabase.from('bookings').select('*, units(id,tipe)').order('created_at',{ascending:false}).limit(100)
@@ -30,6 +31,7 @@ export default async function Admin(){
                 <div className="text-xs text-[#94A3B8]">{new Date(b.created_at).toLocaleString('id-ID')}</div>
               </div>
               <div className="flex gap-2 h-fit relative">
+                <AdminActions id={b.id} status={b.status} />
                 <a href={`https://wa.me/${String(b.wa).replace(/^0/,'62')}?text=${encodeURIComponent(`Halo ${b.nama}, booking ${b.unit_id} ${b.paket} ${b.tgl_mulai} s/d ${b.tgl_selesai} dikonfirmasi Rental Sedulur`)}`} target="_blank" className="text-white px-4 py-2 rounded-xl text-sm font-bold cursor-pointer" style={{background: 'linear-gradient(180deg, #2ED47A 0%, #25D366 100%)', border: '2px solid #C0C0C0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)'}}>✦ Chat WA</a>
               </div>
             </div>

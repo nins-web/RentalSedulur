@@ -103,7 +103,7 @@ export default async function Page() {
           <h1 className="font-display text-4xl lg:text-5xl leading-tight">RENTAL <span className="text-[#A78BFA]">PS4 & PS3</span><br />MOJOKERTO</h1>
           <p className="mt-4 text-lg text-[#94A3B8] max-w-2xl">Rental Sedulur — {ps4Count} unit PS4 + {ps3Count} unit PS3. Stik 2, game update, antar sampai rumah. Paket malam <span className="text-[#FF69B4] font-bold" style={{textShadow: '0 0 8px rgba(255,105,180,0.5)'}}>hemat 40%</span> — era 2000an, untuk semua kalangan.</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#katalog" className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white px-8 py-3.5 rounded-xl font-semibold transition cursor-pointer shadow-[0_0_20px_rgba(124,58,237,0.4)] border border-white/10">Lihat Unit Tersedia ↓</a>
+            <a href="#katalog" className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white px-8 py-3.5 rounded-xl font-semibold transition cursor-pointer shadow-[0_0_20px_rgba(124,58,237,0.4)] border border-white/10">Cek Ketersediaan ↓</a>
             <a href="https://wa.me/6281289538855?text=Halo%20kak%20mau%20tanya%20rental%20PS&utm_source=homepage&utm_medium=wa&utm_campaign=rental_sedulur" target="_blank" className="bg-[#25D366] hover:bg-[#1DA851] text-white px-8 py-3.5 rounded-xl font-semibold transition cursor-pointer flex items-center gap-2 border border-white/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]">WA Admin 0812-8953-8855</a>
           </div>
           <div className="mt-6 flex flex-wrap gap-6 text-sm text-[#94A3B8] font-label">
@@ -154,12 +154,29 @@ export default async function Page() {
                     <PriceCard label="MINGGU" value={mingguan} />
                   </div>
                   <div className="mt-1 text-[10px] text-center font-label" style={{color: '#FF1493'}}>✦ Hemat 42% paket malam ✦</div>
-                  <a href={`/booking?unit=${u.id}`} className="mt-3 block w-full text-white text-center py-2.5 rounded-xl font-semibold text-sm transition cursor-pointer shadow" style={{background: 'linear-gradient(180deg, #8B5CF6 0%, #7C3AED 100%)', border: '1px solid #C0C0C0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4), 0 2px 8px rgba(124,58,237,0.3)'}}>Booking {u.id}</a>
+                  <a href={`/sewa?unit=${u.id}`} className="mt-3 block w-full text-white text-center py-2.5 rounded-xl font-semibold text-sm transition cursor-pointer shadow" style={{background: 'linear-gradient(180deg, #8B5CF6 0%, #7C3AED 100%)', border: '1px solid #C0C0C0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4), 0 2px 8px rgba(124,58,237,0.3)'}}>Booking {u.id}</a>
                   <a href={`https://wa.me/6281289538855?text=${encodeURIComponent(`Halo min, mau sewa ${u.id} ${u.tipe} — cek tanggal tersedia ya`)}`} target="_blank" className="mt-2 block w-full text-white text-center py-2.5 rounded-xl font-semibold text-sm transition cursor-pointer" style={{background: 'linear-gradient(180deg, #25D366 0%, #1DA851 100%)', border: '1px solid #C0C0C0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)'}}>Chat WA</a>
                 </div>
               </div>
             )
           })}
+        </div>
+
+        {/* TESTIMONI — gaya chat WA */}
+        <div className="mt-10">
+          <h2 className="font-display text-2xl text-center">KATA MEREKA <span className="text-[#25D366]">✦ PUAS</span></h2>
+          <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { n: 'Rizky • Sooko', t: 'PS4-nya mulus, stik enak, diantar sampai kos. Paket malam 75k worth it banget 👍' },
+              { n: 'Dimas • Mojokerto Kota', t: 'Booking lewat web gampang, admin fast respon via WA. Anak-anak betah main semalaman 🎮' },
+              { n: 'Fajar • Puri', t: 'Udah 3x sewa buat acara. Unit bersih, game update, harga jelas di awal. Recommended ✦' },
+            ].map((x, i) => (
+              <div key={i} className="bg-[#DCF8C6] rounded-2xl rounded-tl-md p-4 shadow-sm" style={{ border: '1px solid #C0C0C0' }}>
+                <p className="text-sm text-[#0F172A]">{x.t}</p>
+                <p className="text-xs text-[#64748B] mt-2 text-right">{x.n} ✓✓</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* PAKET MALAM BANNER — Y2K bubblegum */}
@@ -178,6 +195,11 @@ export default async function Page() {
 
         <p className="mt-10 text-xs text-[#94A3B8] text-center">Y2K Hybrid — glossy aqua + bubblegum chrome untuk semua kalangan • Design System: <code className="bg-[#F1F5F9] px-2 py-1 rounded">design-system/rental-sedulur/MASTER.md</code></p>
       </section>
+
+      {/* WA FLOAT BUTTON */}
+      <a href="https://wa.me/6281289538855?text=Halo%20kak%20mau%20tanya%20rental%20PS&utm_source=homepage&utm_medium=wa_float" target="_blank" aria-label="Chat WA Owner"
+        className="fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl shadow-lg"
+        style={{ background: 'linear-gradient(180deg, #2ED47A 0%, #1DA851 100%)', border: '2px solid #fff', boxShadow: '0 4px 16px rgba(37,211,102,0.4)' }}>✆</a>
     </main>
   )
 }
