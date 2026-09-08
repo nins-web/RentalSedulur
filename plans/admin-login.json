@@ -1,0 +1,1 @@
+{"name": "Admin login loads","planSteps": [{"description": "Navigate to https://rental-sedulur.vercel.app/admin/login","type": "action"}, {"description": "Verify username and password fields plus Masuk Admin button are visible","type": "assertion"}],"projectId": "0860b5b1-7f92-49d1-b78b-3a9659f145d4","type": "frontend"}
