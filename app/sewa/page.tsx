@@ -43,6 +43,7 @@ function SewaWizard() {
   const [nama, setNama] = useState('')
   const [wa, setWa] = useState('')
   const [catatan, setCatatan] = useState('')
+  const [metode, setMetode] = useState<'qris' | 'cod'>('qris')
   const [total, setTotal] = useState(0)
   const [msg, setMsg] = useState('')
   const [loading, setLoading] = useState(false)
@@ -95,17 +96,26 @@ function SewaWizard() {
     const { error } = await supabase.from('bookings').insert({
       unit_id: unitId, nama: nama.trim(), wa: waNorm, paket,
       tgl_mulai: tglMulai, tgl_selesai: tglSelesai, total,
+      metode_bayar: metode, catatan: catatan.trim() || null,
     })
+    if (error && (error.message.includes('metode_bayar') || error.message.includes('catatan') || error.message.includes('column'))) {
+      // Fallback: DB belum migrasi kolom baru — simpan tanpa metode/catatan
+      const retry = await supabase.from('bookings').insert({
+        unit_id: unitId, nama: nama.trim(), wa: waNorm, paket,
+        tgl_mulai: tglMulai, tgl_selesai: tglSelesai, total,
+      })
+      if (retry.error) { setLoading(false); setMsg('Gagal menyimpan: ' + retry.error.message); return }
+    } else if (error) { setLoading(false); setMsg('Gagal menyimpan: ' + error.message); return }
     setLoading(false)
-    if (error) { setMsg('Gagal menyimpan: ' + error.message); return }
-    const teks = `Halo min Rental Sedulur, mau sewa ${unitId} paket ${paket} ${tglMulai} s/d ${tglSelesai} a/n ${nama.trim()} Total Rp ${total.toLocaleString('id-ID')}${catatan ? ` (Catatan: ${catatan})` : ''}`
+    const metodeLabel = metode === 'qris' ? 'QRIS' : 'COD/Tunai (bayar di tempat)'
+    const teks = `Halo min Rental Sedulur, mau sewa ${unitId} paket ${paket} ${tglMulai} s/d ${tglSelesai} a/n ${nama.trim()} Total Rp ${total.toLocaleString('id-ID')} Metode: ${metodeLabel}${catatan ? ` (Catatan: ${catatan})` : ''}`
     window.open(`https://wa.me/${WA_OWNER}?text=${encodeURIComponent(teks)}`, '_blank')
     setDone(true)
   }
 
   function reset() {
     setStep(1); setUnitId(''); setTglMulai(''); setTglSelesai('')
-    setNama(''); setWa(''); setCatatan(''); setTotal(0); setMsg(''); setDone(false)
+    setNama(''); setWa(''); setCatatan(''); setMetode('qris'); setTotal(0); setMsg(''); setDone(false)
   }
 
   const inputCls = "w-full p-3 rounded-xl bg-white border text-[#0F172A] placeholder:text-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#00FFFF]/30 focus:border-[#7C3AED] text-[16px] transition"
@@ -117,7 +127,7 @@ function SewaWizard() {
         <div className="max-w-md w-full bg-white rounded-[16px] p-8 text-center" style={{ border: '2px solid #C0C0C0', boxShadow: '0 8px 24px rgba(124,58,237,0.12)' }}>
           <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center text-white text-3xl" style={{ background: 'linear-gradient(135deg, #10B981, #00FFFF)', border: '2px solid #C0C0C0' }}>✓</div>
           <h1 className="font-display text-2xl mt-4">Booking tersimpan! 🎮</h1>
-          <p className="text-sm text-[#64748B] mt-2">{unitId} • {paket} • {tglMulai} s/d {tglSelesai}<br />Total <b className="text-[#0F172A]">Rp {total.toLocaleString('id-ID')}</b> a/n {nama.trim()}</p>
+          <p className="text-sm text-[#64748B] mt-2">{unitId} • {paket} • {tglMulai} s/d {tglSelesai}<br />Total <b className="text-[#0F172A]">Rp {total.toLocaleString('id-ID')}</b> a/n {nama.trim()}<br />Metode: <b className="text-[#0F172A]">{metode === 'qris' ? 'QRIS' : 'COD / Tunai'}</b></p>
           <p className="text-sm text-[#64748B] mt-3">Chat WA sudah kebuka — kirim pesannya biar admin langsung konfirmasi ya 😊</p>
           <a href={`https://wa.me/${WA_OWNER}`} target="_blank" className="mt-5 block w-full text-white py-3 rounded-xl font-semibold" style={{ background: 'linear-gradient(180deg, #2ED47A 0%, #1DA851 100%)', border: '2px solid #C0C0C0' }}>Chat Owner Lagi</a>
           <button onClick={reset} className="mt-2 w-full py-3 rounded-xl font-semibold bg-white" style={{ border: '2px solid #C0C0C0' }}>Booking lain</button>
@@ -227,9 +237,35 @@ function SewaWizard() {
                 {catatan && <div className="flex justify-between"><span className="text-[#64748B]">Catatan</span><b>{catatan}</b></div>}
                 <div className="flex justify-between pt-2" style={{ borderTop: '1px dashed #CBD5E1' }}><span className="text-[#64748B]">Total bayar</span><b className="text-lg" style={{ color: '#7C3AED' }}>Rp {total.toLocaleString('id-ID')}</b></div>
               </div>
-              <p className="text-xs text-[#64748B] text-center">💰 Bayar: transfer / QRIS / bayar di tempat — admin konfirmasi via WA setelah kamu klik tombol di bawah</p>
-              <button disabled={loading} onClick={submit} className="w-full text-white py-3.5 rounded-xl font-semibold disabled:opacity-60" style={{ background: 'linear-gradient(180deg, #2ED47A 0%, #1DA851 100%)', border: '2px solid #C0C0C0' }}>
-                {loading ? 'Menyimpan...' : '✦ Saya Sudah Bayar ✦'}
+              <p className="font-semibold">Pilih cara bayar 💰</p>
+              <div className="grid grid-cols-2 gap-2">
+                <button type="button" onClick={() => setMetode('qris')}
+                  className="p-3 rounded-xl border-2 text-sm font-semibold transition"
+                  style={metode === 'qris' ? { borderColor: '#7C3AED', background: '#F5F3FF' } : { borderColor: '#E2E8F0', background: '#fff' }}>
+                  📷 QRIS<br /><span className="text-xs font-normal text-[#64748B]">Scan, bayar sekarang</span>
+                </button>
+                <button type="button" onClick={() => setMetode('cod')}
+                  className="p-3 rounded-xl border-2 text-sm font-semibold transition"
+                  style={metode === 'cod' ? { borderColor: '#10B981', background: '#ECFDF5' } : { borderColor: '#E2E8F0', background: '#fff' }}>
+                  💵 COD / Tunai<br /><span className="text-xs font-normal text-[#64748B]">Bayar saat unit datang</span>
+                </button>
+              </div>
+              {metode === 'qris' ? (
+                <div className="rounded-xl p-5 text-center" style={{ background: 'linear-gradient(135deg, #F5F3FF 0%, #E0F7FF 100%)', border: '2px dashed #7C3AED' }}>
+                  <p className="font-bold">📷 Scan QRIS Rental Sedulur</p>
+                  <p className="font-bold text-2xl mt-1" style={{ color: '#7C3AED' }}>Rp {total.toLocaleString('id-ID')}</p>
+                  <div className="mx-auto mt-3 w-40 h-40 rounded-xl bg-white flex items-center justify-center text-5xl" style={{ border: '2px solid #C0C0C0' }}>📷</div>
+                  <p className="text-xs text-[#64748B] mt-3">Gambar QRIS owner segera dipasang di sini.<br />Klik tombol di bawah, lalu kirim bukti bayar lewat WA yang kebuka otomatis ya 😊</p>
+                </div>
+              ) : (
+                <div className="rounded-xl p-5 text-center" style={{ background: '#ECFDF5', border: '2px dashed #10B981' }}>
+                  <p className="font-bold">💵 Bayar Tunai di Tempat</p>
+                  <p className="font-bold text-2xl mt-1" style={{ color: '#059669' }}>Rp {total.toLocaleString('id-ID')}</p>
+                  <p className="text-xs text-[#64748B] mt-3">Siapkan uang pas saat unit diantar.<br />Tanpa DP — admin konfirmasi via WA setelah kamu klik tombol di bawah 😊</p>
+                </div>
+              )}
+              <button disabled={loading} onClick={submit} className="w-full text-white py-3.5 rounded-xl font-semibold disabled:opacity-60" style={{ background: metode === 'qris' ? 'linear-gradient(180deg, #8B5CF6 0%, #7C3AED 100%)' : 'linear-gradient(180deg, #2ED47A 0%, #1DA851 100%)', border: '2px solid #C0C0C0' }}>
+                {loading ? 'Menyimpan...' : metode === 'qris' ? '✦ Saya Sudah Bayar via QRIS ✦' : '✦ Booking COD — Bayar di Tempat ✦'}
               </button>
               <div className="flex gap-2">
                 <button onClick={() => setStep(2)} className="flex-1 py-3 rounded-xl font-semibold bg-white text-sm" style={{ border: '2px solid #C0C0C0' }}>← Ubah data</button>
