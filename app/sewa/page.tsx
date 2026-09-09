@@ -254,8 +254,8 @@ function SewaWizard() {
                 <div className="rounded-xl p-5 text-center" style={{ background: 'linear-gradient(135deg, #F5F3FF 0%, #E0F7FF 100%)', border: '2px dashed #7C3AED' }}>
                   <p className="font-bold">📷 Scan QRIS Rental Sedulur</p>
                   <p className="font-bold text-2xl mt-1" style={{ color: '#7C3AED' }}>Rp {total.toLocaleString('id-ID')}</p>
-                  <div className="mx-auto mt-3 w-40 h-40 rounded-xl bg-white flex items-center justify-center text-5xl" style={{ border: '2px solid #C0C0C0' }}>📷</div>
-                  <p className="text-xs text-[#64748B] mt-3">Gambar QRIS owner segera dipasang di sini.<br />Klik tombol di bawah, lalu kirim bukti bayar lewat WA yang kebuka otomatis ya 😊</p>
+                  <img src="/qris-sedulur-ps.jpg" alt="QRIS Sedulur PS" className="mx-auto mt-3 w-52 rounded-xl bg-white" style={{ border: '2px solid #C0C0C0' }} />
+                  <p className="text-xs text-[#64748B] mt-3">Scan pakai aplikasi apa saja (GoPay / OVO / DANA / m-banking).<br />Klik tombol di bawah, lalu kirim bukti bayar lewat WA yang kebuka otomatis ya 😊</p>
                 </div>
               ) : (
                 <div className="rounded-xl p-5 text-center" style={{ background: '#ECFDF5', border: '2px dashed #10B981' }}>
