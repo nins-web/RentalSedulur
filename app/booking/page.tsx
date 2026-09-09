@@ -109,7 +109,13 @@ function BookingForm(){
           </button>
           {msg && <p className={`text-sm px-3 py-2 rounded-xl border-2 ${msg.includes('tersimpan') ? 'bg-[#ECFDF5] text-[#065F46] border-[#10B981]/30' : 'bg-[#FEF2F2] text-[#991B1B] border-[#EF4444]/30'}`} style={{boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6)'}}>{msg}</p>}
         </form>
-        <p className="mt-4 text-center text-xs text-[#64748B]">✦ Pembayaran: DP 50k transfer / bayar full di tempat • Antar gratis Mojokerto kota • Y2K untuk semua kalangan ✦</p>
+        <p className="mt-4 text-center text-xs text-[#64748B]">✦ Pembayaran: DP 50k via QRIS / bayar full di tempat • Antar gratis Mojokerto kota • Y2K untuk semua kalangan ✦</p>
+        <div className="mt-4 rounded-[16px] border-2 bg-white p-4 text-center" style={{borderColor: '#C0C0C0'}}>
+          <p className="font-heading font-bold text-sm" style={{color: '#7C3AED'}}>Scan QRIS Sedulur PS untuk DP / Pelunasan</p>
+          <p className="text-xs text-[#64748B] mt-1">NMID: ID1025367445265 • A01</p>
+          <img src="/qris-sedulur-ps.jpg" alt="QRIS Sedulur PS" className="mx-auto mt-3 w-56 rounded-xl border" style={{borderColor: '#C0C0C0'}} />
+          <p className="text-xs text-[#64748B] mt-2">Abis scan, kirim bukti ke WA 6281289538855 ya Kak 🙏</p>
+        </div>
       </div>
     </main>
   )

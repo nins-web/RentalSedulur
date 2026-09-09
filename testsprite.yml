@@ -1,0 +1,30 @@
+version: '1.0'
+project:
+  name: "rental-sedulur"
+  framework: "nextjs"
+  port: 3000
+  
+test:
+  baseUrl: "http://localhost:3000"
+  routes:
+    - path: "/"
+      expect:
+        status: 200
+        contains: "Rental"
+    - path: "/booking"
+      expect:
+        status: 200
+    - path: "/admin/login"
+      expect:
+        status: 200
+    - path: "/rental-ps-mojokerto"
+      expect:
+        status: 200
+        contains: "Mojokerto"
+  api:
+    - path: "/api/health"
+      expect:
+        status: 200
+  performance:
+    maxLoadTime: 3000
+    maxApiResponse: 500
