@@ -26,25 +26,21 @@ export default function Login(){
     e.preventDefault()
     if(!phone||!nama) return setMsg('Lengkapi nama & no HP')
     setLoading(true); setMsg('')
-    const {error} = await supabase.auth.signInWithOtp({ phone: ke62(phone), options:{ data:{ nama } } })
+    const r = await fetch('/api/otp/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,nama})})
+    const j = await r.json().catch(()=>({}))
     setLoading(false)
-    if(error){
-      if(/sms|phone|twilio/i.test(error.message)) return setMsg('OTP SMS belum aktif. Admin: isi Twilio di Supabase Dashboard > Authentication > Sign In / Up > Phone.')
-      return setMsg('Gagal: '+error.message)
-    }
-    setStep('kode'); setMsg('Kode OTP dikirim ke '+phone+' — masukkan 6 digit')
+    if(!r.ok) return setMsg(j.error ?? 'Gagal kirim OTP')
+    setStep('kode'); setMsg('Kode OTP dikirim via WA ke '+phone+' — masukkan 6 digit')
   }
   async function verifOtp(e:React.FormEvent){
     e.preventDefault()
     if(otp.length<6) return setMsg('Kode OTP 6 digit')
     setLoading(true); setMsg('')
-    const {data,error} = await supabase.auth.verifyOtp({ phone: ke62(phone), token: otp, type:'sms' })
+    const r = await fetch('/api/otp/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,code:otp,nama})})
+    const j = await r.json().catch(()=>({}))
     setLoading(false)
-    if(error) return setMsg('Gagal: '+error.message)
-    if(data.user){
-      await supabase.from('members').upsert({ id: data.user.id, nama, phone: ke62(phone) }, { onConflict:'id' })
-      window.location.href = '/booking'
-    }
+    if(!r.ok) return setMsg(j.error ?? 'Gagal verifikasi')
+    window.location.href = '/booking'
   }
   return (
     <main className="min-h-screen bg-[#F8FAFC]">
