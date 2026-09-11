@@ -5,7 +5,7 @@ export const metadata = {
     default: 'Rental Sedulur - Rental PS4 & PS3 Mojokerto | 8 Unit, Paket Malam 75k',
     template: '%s | Rental Sedulur'
   },
-  description: 'Rental PS4 & PS3 Mojokerto — 8 unit (5 PS4 130k/hari 75k/malam 500k/minggu, 3 PS3 100k/50k/350k). Paket malam hemat 40%, antar gratis kota, booking anti double-booking. WA 081289538855',
+  description: 'Rental PS4 & PS3 Mojokerto — 8 unit (5 PS4 130k/hari 75k/malam 500k/minggu, 3 PS3 100k/50k/400k). Paket malam hemat 40%, antar gratis kota, booking anti double-booking. WA 081289538855',
   keywords: ['rental ps mojokerto','rental ps4 mojokerto','rental ps3 mojokerto','sewa ps mojokerto','rental playstation mojokerto','paket malam ps'],
   authors: [{ name: 'Rental Sedulur' }],
   metadataBase: new URL('https://rental-sedulur.vercel.app'),

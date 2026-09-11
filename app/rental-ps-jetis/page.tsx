@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase'
 export const revalidate = 0
 export const metadata = {
   title: 'Rental PS Jetis — PS4 75k/malam, 8 Unit Live | Rental Sedulur',
-  description: 'Rental PS Jetis — cek live 8 unit, PS4 130k/hari 75k/malam, PS3 100k/50k/350k. Paket malam hemat 40%. WA 081289538855',
+  description: 'Rental PS Jetis — cek live 8 unit, PS4 130k/hari 75k/malam, PS3 100k/50k/400k. Paket malam hemat 40%. WA 081289538855',
 }
 export default async function Page(){
   let units:any[]=[]

@@ -2,6 +2,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { TIERS, PAKET_LABEL, hitungTotal, type Paket } from '@/lib/prices'
 type Unit = { id:string, tipe:string, harga_harian:number, harga_malam:number, harga_mingguan:number }
 
 const FOTO: Record<string,string> = { PS3: '/unit-ps3.jpg', PS4: '/unit-ps4.jpg' }
@@ -11,7 +12,7 @@ function BookingForm(){
   const sp = useSearchParams()
   const [units,setUnits]=useState<Unit[]>([])
   const [unitId,setUnitId]=useState('')
-  const [paket,setPaket]=useState<'harian'|'malam'|'mingguan'>('harian')
+  const [paket,setPaket]=useState<Paket>('harian')
   const [tglMulai,setTglMulai]=useState('')
   const [tglSelesai,setTglSelesai]=useState('')
   const [nama,setNama]=useState('')
@@ -29,15 +30,13 @@ function BookingForm(){
     })
   },[tglMulai,tglSelesai])
   const unit = units.find(x=>x.id===unitId)
-  const tarif = !unit ? 0 : paket==='harian' ? unit.harga_harian : paket==='malam' ? unit.harga_malam : unit.harga_mingguan
+  const tarif = !unit ? 0 : (TIERS[unit.tipe] ?? TIERS.PS4)[paket]
   const bentrok = unitId !== '' && booked.includes(unitId)
   useEffect(()=>{
     if(!unit || !tglMulai || !tglSelesai) { setTotal(0); return }
     const d1 = new Date(tglMulai), d2 = new Date(tglSelesai)
     const days = Math.max(1, Math.ceil((d2.getTime()-d1.getTime())/86400000))
-    if(paket==='harian') setTotal(days * unit.harga_harian)
-    else if(paket==='malam') setTotal(days * unit.harga_malam)
-    else setTotal(Math.ceil(days/7) * unit.harga_mingguan)
+    setTotal(hitungTotal(unit.tipe, paket, days))
   },[unitId,paket,tglMulai,tglSelesai,units])
   async function submit(e:React.FormEvent){
     e.preventDefault()
@@ -63,7 +62,7 @@ function BookingForm(){
         <a href="/" className="inline-flex items-center gap-2 text-sm text-[#64748B] hover:text-[#7C3AED] transition cursor-pointer">← Kembali katalog</a>
         <div className="mt-4">
           <h1 className="font-display text-3xl text-[#0F172A]">Booking Rental</h1>
-          <p className="mt-2 text-sm text-[#64748B]">PS4: <span className="font-semibold text-[#0F172A]">130k</span>/hari 75k/malam 500k/minggu • PS3: 100k/hari 50k/malam 350k/minggu</p>
+          <p className="mt-2 text-sm text-[#64748B]">PS4: <span className="font-semibold text-[#0F172A]">80k</span>/12jam 130k/hari 200k/2hari 380k/3hari 75k/malam 500k/minggu • PS3: 50k/12jam 100k/hari 150k/2hari 200k/3hari 50k/malam 400k/minggu</p>
         </div>
 
         {paket==='malam' && (
@@ -100,10 +99,8 @@ function BookingForm(){
 
           <div>
             <label className={labelCls}><span className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs" style={{background: 'linear-gradient(135deg, #FF69B4, #00FFFF)'}}>2</span> Paket</label>
-            <select value={paket} onChange={e=>setPaket(e.target.value as any)} className={inputCls + " cursor-pointer"} style={{borderColor: '#C0C0C0'}}>
-              <option value="harian">Harian (24 jam)</option>
-              <option value="malam">Malam (19:00–07:00) — Hemat 40%</option>
-              <option value="mingguan">Mingguan (7 hari)</option>
+            <select value={paket} onChange={e=>setPaket(e.target.value as Paket)} className={inputCls + " cursor-pointer"} style={{borderColor: '#C0C0C0'}}>
+              {(Object.keys(PAKET_LABEL) as Paket[]).map(p=><option key={p} value={p}>{PAKET_LABEL[p]}{p==='malam' ? ' — Hemat 40%' : ''}</option>)}
             </select>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

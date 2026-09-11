@@ -7,9 +7,9 @@ const FALLBACK_UNITS = [
   { id: 'SD-PS4-03', tipe: 'PS4', harga_harian: 130000, harga_malam: 75000, harga_mingguan: 500000 },
   { id: 'SD-PS4-04', tipe: 'PS4', harga_harian: 130000, harga_malam: 75000, harga_mingguan: 500000 },
   { id: 'SD-PS4-05', tipe: 'PS4', harga_harian: 130000, harga_malam: 75000, harga_mingguan: 500000 },
-  { id: 'SD-PS3-01', tipe: 'PS3', harga_harian: 100000, harga_malam: 50000, harga_mingguan: 350000 },
-  { id: 'SD-PS3-02', tipe: 'PS3', harga_harian: 100000, harga_malam: 50000, harga_mingguan: 350000 },
-  { id: 'SD-PS3-03', tipe: 'PS3', harga_harian: 100000, harga_malam: 50000, harga_mingguan: 350000 },
+  { id: 'SD-PS3-01', tipe: 'PS3', harga_harian: 100000, harga_malam: 50000, harga_mingguan: 400000 },
+  { id: 'SD-PS3-02', tipe: 'PS3', harga_harian: 100000, harga_malam: 50000, harga_mingguan: 400000 },
+  { id: 'SD-PS3-03', tipe: 'PS3', harga_harian: 100000, harga_malam: 50000, harga_mingguan: 400000 },
 ]
 
 // Y2K Icon — glossy aqua + chrome, untuk semua kalangan (tidak cuma ibu-ibu)
