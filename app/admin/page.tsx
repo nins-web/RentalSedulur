@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import AdminActions from './actions'
+import RefreshButton from './refresh'
 export const revalidate = 0
 export default async function Admin(){
   const {data: bookings} = await supabase.from('bookings').select('*, units(id,tipe)').order('created_at',{ascending:false}).limit(100)
@@ -14,7 +15,10 @@ export default async function Admin(){
             <h1 className="text-2xl font-display flex items-center gap-3">Admin — Booking Masuk <span className="text-xs px-2.5 py-1 rounded-full text-white font-bold" style={{background: 'linear-gradient(135deg, #FF69B4, #00FFFF)', border: '1px solid #C0C0C0'}}>✦ Y2K</span></h1>
             <p className="text-sm text-[#64748B] mt-1">WA Admin 6281289538855 • {bookings?.length||0} booking • {units?.length||0} unit • untuk semua kalangan</p>
           </div>
-          <a href="/" className="text-sm px-4 py-2 rounded-xl font-semibold transition cursor-pointer" style={{background: 'linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 100%)', border: '2px solid #C0C0C0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 8px rgba(0,0,0,0.08)'}}>← Katalog</a>
+          <div className="flex items-center gap-3 flex-wrap">
+            <RefreshButton />
+            <a href="/" className="text-sm px-4 py-2 rounded-xl font-semibold transition cursor-pointer" style={{background: 'linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 100%)', border: '2px solid #C0C0C0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 8px rgba(0,0,0,0.08)'}}>← Katalog</a>
+          </div>
         </div>
 
         <div className="mt-6 space-y-3">
@@ -22,7 +26,7 @@ export default async function Admin(){
             <div key={b.id} className="bg-white p-4 rounded-[16px] flex flex-col md:flex-row md:justify-between gap-3 relative overflow-hidden" style={{border: '2px solid #C0C0C0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9), 0 4px 12px rgba(0,0,0,0.06)'}}>
               <div className="absolute top-0 left-0 right-0 h-6 rounded-t-[14px] pointer-events-none" style={{background: 'linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 100%)'}} />
               <div className="relative">
-                <div className="font-bold flex items-center gap-2 flex-wrap">{b.unit_id} • {b.paket} • Rp {Number(b.total).toLocaleString('id-ID')} • {(b as any).metode_bayar ? <span className="text-xs px-2 py-1 rounded-full font-bold border bg-white">{(b as any).metode_bayar === 'cod' ? '💵 COD' : '📷 QRIS'}</span> : null} • <span className={`text-xs px-2 py-1 rounded-full font-bold border ${b.status==='confirmed'?'text-white':b.status==='batal'?'text-white':'text-white'}`} style={{
+                <div className="font-bold flex items-center gap-2 flex-wrap">{b.unit_id} • {b.paket} • Rp {Number(b.total).toLocaleString('id-ID')} • {(b as any).metode_bayar ? <span className="text-xs px-2 py-1 rounded-full font-bold border bg-white">{(b as any).metode_bayar === 'cash' ? '💵 Cash' : (b as any).metode_bayar === 'transfer' ? '🏦 Transfer' : (b as any).metode_bayar === 'cod' ? '💵 COD' : '📷 QRIS'}</span> : null} • <span className={`text-xs px-2 py-1 rounded-full font-bold border ${b.status==='confirmed'?'text-white':b.status==='batal'?'text-white':'text-white'}`} style={{
                   background: b.status==='confirmed' ? 'linear-gradient(135deg, #10B981, #00FFFF)' : b.status==='batal' ? 'linear-gradient(135deg, #EF4444, #FF69B4)' : 'linear-gradient(135deg, #F59E0B, #FF69B4)',
                   borderColor: '#C0C0C0',
                   boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)'
