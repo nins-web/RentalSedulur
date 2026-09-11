@@ -7,8 +7,8 @@
 - Jam: 08.00-22.00, bisa booking online 24 jam
 
 ## Unit & Harga
-- PS4: SD-PS4-01 s/d 05 (5 unit) -> Harian 130K, Malam 18.00-08.00 75K (hemat 42%), Mingguan 500K
-- PS3: SD-PS3-01 s/d 03 (3 unit) -> Harian 100K, Malam 50K (hemat 50%), Mingguan 350K
+- PS4: SD-PS4-01 s/d 05 (5 unit) -> 12 Jam 80K, Harian 130K, 2 Hari 200K, 3 Hari 380K, Malam 18.00-08.00 75K (hemat 42%), Mingguan 500K
+- PS3: SD-PS3-01 s/d 03 (3 unit) -> 12 Jam 50K, Harian 100K, 2 Hari 150K, 3 Hari 200K, Malam 50K (hemat 50%), Mingguan 400K
 - Paket malam paling laku untuk mabar!
 
 ## Fasilitas
