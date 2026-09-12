@@ -85,7 +85,6 @@ export default async function Page() {
           <a href="/" className="font-display text-lg text-white flex items-center gap-2">Rental Sedulur <span className="text-xs px-2 py-0.5 rounded-full text-white" style={{background: 'linear-gradient(135deg, #FF69B4, #00FFFF)', border: '1px solid #C0C0C0'}}>Y2K</span></a>
           <div className="flex gap-2">
             <a href="/login" className="text-sm px-3 py-1.5 rounded-xl bg-white text-[#0F172A] font-semibold border" style={{borderColor: '#C0C0C0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9)'}}>Member Login</a>
-            <a href="/admin/login" className="text-sm px-3 py-1.5 rounded-xl text-white font-semibold" style={{background: 'linear-gradient(135deg, #1E293B, #7C3AED)', border: '1px solid #C0C0C0'}}>Admin</a>
           </div>
         </div>
       </nav>
