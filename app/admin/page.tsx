@@ -5,6 +5,7 @@ export const revalidate = 0
 export default async function Admin(){
   const {data: bookings} = await supabase.from('bookings').select('*, units(id,tipe)').order('created_at',{ascending:false}).limit(100)
   const {data: units} = await supabase.from('units').select('id')
+  const {data: feedbacks} = await supabase.from('feedbacks').select('*').order('created_at',{ascending:false}).limit(50)
   return (
     <main className="min-h-screen bg-[#F8FAFC] relative overflow-hidden">
       <div className="h-2 w-full" style={{background: 'linear-gradient(90deg, #FF69B4, #00FFFF, #7C3AED, #FF69B4)'}} />
@@ -36,11 +37,23 @@ export default async function Admin(){
               </div>
               <div className="flex gap-2 h-fit relative">
                 <AdminActions id={b.id} status={b.status} />
-                <a href={`https://wa.me/${String(b.wa).replace(/^0/,'62')}?text=${encodeURIComponent(`Halo ${b.nama}, booking ${b.unit_id} ${b.paket} ${b.tgl_mulai} s/d ${b.tgl_selesai} dikonfirmasi Rental Sedulur`)}`} target="_blank" className="text-white px-4 py-2 rounded-xl text-sm font-bold cursor-pointer" style={{background: 'linear-gradient(180deg, #2ED47A 0%, #25D366 100%)', border: '2px solid #C0C0C0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)'}}>✦ Chat WA</a>
+                <a href={`https://wa.me/${String(b.wa).replace(/^0/,'62')}?text=${encodeURIComponent(`Halo ${b.nama}, booking ${b.unit_id} ${b.paket} ${b.tgl_mulai} s/d ${b.tgl_selesai} dikonfirmasi Rental Sedulur. Setelah selesai, kasih kritik & saran di sini ya Kak: https://rentalsedulur.vercel.app/feedback/${b.id}`)}`} target="_blank" className="text-white px-4 py-2 rounded-xl text-sm font-bold cursor-pointer" style={{background: 'linear-gradient(180deg, #2ED47A 0%, #25D366 100%)', border: '2px solid #C0C0C0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)'}}>✦ Chat WA</a>
               </div>
             </div>
           ))}
           {(!bookings||bookings.length===0) && <p className="text-center py-12 rounded-[16px] bg-white" style={{border: '2px solid #C0C0C0', color: '#64748B'}}>Belum ada booking — Y2K siap untuk semua kalangan ✦</p>}
+        </div>
+
+        <h2 className="mt-8 text-xl font-display text-[#0F172A]">Kritik & Saran Masuk ({(feedbacks||[]).length})</h2>
+        <div className="mt-4 space-y-3">
+          {(feedbacks||[]).map((f:any)=>(
+            <div key={f.id} className="bg-white p-4 rounded-[16px]" style={{border: '2px solid #C0C0C0'}}>
+              <div className="font-bold text-sm text-[#0F172A]">{'⭐'.repeat(Math.max(1,Math.min(5,Number(f.rating)||0)))} <span className="text-[#94A3B8] font-normal">({f.rating}/5)</span> • {f.unit_id} • {f.nama}</div>
+              <p className="text-sm text-[#475569] mt-1">{f.pesan}</p>
+              <div className="text-xs text-[#94A3B8] mt-1">{new Date(f.created_at).toLocaleString('id-ID')}</div>
+            </div>
+          ))}
+          {(!feedbacks||feedbacks.length===0) && <p className="text-center py-8 rounded-[16px] bg-white text-sm" style={{border: '2px solid #C0C0C0', color: '#64748B'}}>Belum ada masukan — link form dikirim via WA saat unit selesai</p>}
         </div>
       </div>
     </main>
