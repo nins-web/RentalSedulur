@@ -40,7 +40,8 @@ export default function Login(){
     const j = await r.json().catch(()=>({}))
     setLoading(false)
     if(!r.ok) return setMsg(j.error ?? 'Gagal verifikasi')
-    window.location.href = '/booking'
+    try { localStorage.setItem('member_nama', nama); localStorage.setItem('member_wa', phone) } catch {}
+    window.location.href = '/member'
   }
   return (
     <main className="min-h-screen bg-[#F8FAFC]">

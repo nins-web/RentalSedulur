@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import UnitList from './UnitList'
 export const revalidate = 0
 
 const FALLBACK_UNITS = [
@@ -111,55 +112,9 @@ export default async function Page() {
         </div>
       </section>
 
-      {/* KATALOG — icon Y2K hybrid */}
+      {/* KATALOG — daftar ringkas ala barbershop */}
       <section id="katalog" className="max-w-6xl mx-auto px-6 py-10">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-          <h2 className="font-display text-2xl">PILIH UNIT <span className="text-[#7C3AED]">{units.length} TERSEDIA</span></h2>
-          <div className="flex flex-wrap gap-2 font-label text-sm">
-            <span className="px-4 py-2 bg-[#7C3AED] text-white rounded-full shadow-[0_2px_8px_rgba(124,58,237,0.3)]">Semua ({units.length})</span>
-            <span className="px-4 py-2 bg-white border border-[#E2E8F0] rounded-full">PS4 ({ps4Count})</span>
-            <span className="px-4 py-2 bg-white border border-[#E2E8F0] rounded-full">PS3 ({ps3Count})</span>
-            <span className="px-4 py-2 rounded-full text-white font-bold border" style={{background: 'linear-gradient(135deg, #FF69B4, #00FFFF)', borderColor: '#C0C0C0'}}>✦ Paket Malam</span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {units.map((u: any) => {
-            const isPS4 = u.tipe === 'PS4'
-            const harian = Number(u.harga_harian).toLocaleString('id-ID')
-            const malam = Number(u.harga_malam).toLocaleString('id-ID')
-            const mingguan = Number(u.harga_mingguan).toLocaleString('id-ID')
-            return (
-              <div key={u.id} className="bg-white rounded-[12px] border border-[#E2E8F0] shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer overflow-hidden group">
-                <div className="relative h-44 flex items-center justify-center overflow-hidden" style={{
-                  background: isPS4 ? 'linear-gradient(135deg, #1E1C35 0%, #4C1D95 50%, #FF69B4 100%)' : 'linear-gradient(135deg, #0F172A 0%, #334155 50%, #00FFFF 100%)'
-                }}>
-                  {/* glossy overlay Y2K */}
-                  <div className="absolute inset-0 opacity-20" style={{background: 'linear-gradient(180deg, rgba(255,255,255,0.6) 0%, transparent 60%)'}} />
-                  <Y2KController ps4={isPS4} />
-                  <span className="absolute top-3 left-3 text-white text-xs font-label font-semibold px-2.5 py-1 rounded-full shadow" style={{
-                    background: isPS4 ? 'linear-gradient(135deg, #7C3AED, #A78BFA)' : 'linear-gradient(135deg, #334155, #00FFFF)',
-                    border: '1px solid rgba(255,255,255,0.4)',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.5)'
-                  }}>{u.tipe}</span>
-                  {isBooked(u.id) ? <span className="absolute top-3 right-3 text-white text-xs font-label px-2.5 py-1 rounded-full shadow" style={{background: 'linear-gradient(135deg, #F59E0B, #FF69B4)', border: '1px solid #C0C0C0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)'}}>● Dibooking {getBooking(u.id)?.tgl_mulai.slice(5).replace('-','/')}</span> : <span className="absolute top-3 right-3 bg-[#10B981] text-white text-xs font-label px-2.5 py-1 rounded-full shadow" style={{boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.5)'}}>● Tersedia</span>}
-                </div>
-                <div className="p-4">
-                  <h3 className="font-heading font-bold text-lg">{u.id}</h3>
-                  <p className="text-xs text-[#64748B]">{isPS4 ? 'Game update • HDMI • Online ready' : 'Game klasik • Stik 2 • Antar'}</p>
-                  <div className="mt-3 grid grid-cols-3 gap-2">
-                    <PriceCard label="HARIAN" value={harian} />
-                    <PriceCard label="MALAM" value={malam} highlight />
-                    <PriceCard label="MINGGU" value={mingguan} />
-                  </div>
-                  <div className="mt-1 text-[10px] text-center font-label" style={{color: '#FF1493'}}>✦ Hemat 42% paket malam ✦</div>
-                  <a href={`/sewa?unit=${u.id}`} className="mt-3 block w-full text-white text-center py-2.5 rounded-xl font-semibold text-sm transition cursor-pointer shadow" style={{background: 'linear-gradient(180deg, #8B5CF6 0%, #7C3AED 100%)', border: '1px solid #C0C0C0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4), 0 2px 8px rgba(124,58,237,0.3)'}}>Booking {u.id}</a>
-                  <a href={`https://wa.me/6281289538855?text=${encodeURIComponent(`Halo min, mau sewa ${u.id} ${u.tipe} — cek tanggal tersedia ya`)}`} target="_blank" className="mt-2 block w-full text-white text-center py-2.5 rounded-xl font-semibold text-sm transition cursor-pointer" style={{background: 'linear-gradient(180deg, #25D366 0%, #1DA851 100%)', border: '1px solid #C0C0C0', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)'}}>Chat WA</a>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+        <UnitList units={units} bookings={bookings} />
 
         {/* TESTIMONI — gaya chat WA */}
         <div className="mt-10">
