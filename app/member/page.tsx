@@ -18,23 +18,39 @@ export default function Member() {
   const [wa, setWa] = useState('')
   const [rows, setRows] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
+  const [needPhone, setNeedPhone] = useState(false)
   const [topups, setTopups] = useState<any[]>([])
   const [showTopup, setShowTopup] = useState(false)
   const [nominal, setNominal] = useState(100000)
   const [topupMsg, setTopupMsg] = useState('')
 
   useEffect(() => {
-    const n = localStorage.getItem('member_nama') ?? ''
-    const w = localStorage.getItem('member_wa') ?? ''
+    // Kunci sesi: nomor HANYA dari server (/api/me via cookie OTP), bukan input.
+    fetch('/api/me').then(r => r.json()).then(async (j) => {
+      if (j.member?.phone) {
+        loadData(j.member.nama ?? 'Member', j.member.phone)
+        return
+      }
+      // Fallback: sesi Google (tanpa no HP → minta tautkan)
+      const { data } = await supabase.auth.getUser()
+      if (data.user?.email) {
+        setNama(data.user.email)
+        setNeedPhone(true)
+      }
+      setLoading(false)
+    }).catch(() => setLoading(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  function loadData(n: string, w: string) {
     setNama(n); setWa(w)
-    if (!w) { setLoading(false); return }
     supabase.from('bookings').select('id,unit_id,paket,tgl_mulai,tgl_selesai,total,status')
       .in('wa', waVariants(w)).order('tgl_mulai', { ascending: false }).limit(20)
       .then(({ data }: any) => { if (data) setRows(data); setLoading(false) })
     supabase.from('topups').select('nominal,status')
       .in('phone', waVariants(w)).order('created_at', { ascending: false }).limit(20)
       .then(({ data }: any) => { if (data) setTopups(data) })
-  }, [])
+  }
 
   const saldo = topups.filter(t => t.status === 'approved').reduce((a, t) => a + Number(t.nominal), 0)
   const pendingTopup = topups.some(t => t.status === 'pending')
@@ -52,10 +68,10 @@ export default function Member() {
     return (
       <main className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-6">
         <div className="max-w-md w-full bg-white rounded-[16px] p-8 text-center" style={{ border: '2px solid #C0C0C0' }}>
-          <p className="text-4xl">🔒</p>
-          <h1 className="font-display text-2xl mt-3">Belum login</h1>
-          <p className="text-sm text-[#64748B] mt-2">Masuk dulu untuk lihat riwayat sewamu.</p>
-          <a href="/login" className="mt-5 block w-full text-white py-3 rounded-xl font-semibold" style={{ background: 'linear-gradient(180deg, #8B5CF6 0%, #7C3AED 100%)', border: '2px solid #C0C0C0' }}>Login / Daftar</a>
+          <p className="text-4xl">{needPhone ? '📱' : '🔒'}</p>
+          <h1 className="font-display text-2xl mt-3">{needPhone ? 'Tautkan No HP' : 'Belum login'}</h1>
+          <p className="text-sm text-[#64748B] mt-2">{needPhone ? `Login Google (${nama}) berhasil — tautkan nomor HP via OTP untuk buka riwayat & saldo.` : 'Masuk dulu untuk lihat riwayat sewamu.'}</p>
+          <a href="/login" className="mt-5 block w-full text-white py-3 rounded-xl font-semibold" style={{ background: 'linear-gradient(180deg, #8B5CF6 0%, #7C3AED 100%)', border: '2px solid #C0C0C0' }}>{needPhone ? 'Tautkan via OTP HP' : 'Login / Daftar'}</a>
         </div>
       </main>
     )
