@@ -43,7 +43,8 @@ function SewaWizard() {
   const [nama, setNama] = useState('')
   const [wa, setWa] = useState('')
   const [catatan, setCatatan] = useState('')
-  const [metode, setMetode] = useState<'qris' | 'cod'>('qris')
+  const [metode, setMetode] = useState<'qris' | 'cod' | 'saldo'>('qris')
+  const [saldo, setSaldo] = useState(0)
   const [total, setTotal] = useState(0)
   const [msg, setMsg] = useState('')
   const [loading, setLoading] = useState(false)
@@ -58,6 +59,19 @@ function SewaWizard() {
     supabase.from('bookings').select('unit_id,tgl_mulai,tgl_selesai').in('status', ['pending', 'confirmed']).then(({ data }: any) => {
       if (data) setBookings(data)
     })
+    // Saldo member (kalau login OTP) untuk opsi bayar potong saldo
+    fetch('/api/me').then(r => r.json()).then((j) => {
+      const phone: string | undefined = j.member?.phone
+      if (!phone) return
+      const d = phone.replace(/\D/g, '')
+      const variants = [phone, d]
+      if (d.startsWith('08')) variants.push('62' + d.slice(1), '+62' + d.slice(1))
+      else if (d.startsWith('62')) variants.push('0' + d.slice(2), '+' + d)
+      supabase.from('topups').select('nominal,status').in('phone', [...new Set(variants)])
+        .then(({ data }: any) => {
+          if (data) setSaldo(data.filter((t: any) => t.status === 'approved').reduce((a: number, t: any) => a + Number(t.nominal), 0))
+        })
+    }).catch(() => {})
   }, [sp])
 
   useEffect(() => {
@@ -85,11 +99,22 @@ function SewaWizard() {
       return
     }
     setLoading(true)
+    // Bayar potong saldo: catat pemakaian dulu, batalkan kalau booking gagal
+    let usageId: string | null = null
+    if (metode === 'saldo') {
+      if (saldo < total) { setLoading(false); setMsg('Saldo kurang — top up dulu ya 😊'); return }
+      const { data: usage, error: usageErr } = await supabase.from('topups')
+        .insert({ phone: waNorm, nama: nama.trim(), nominal: -total, status: 'approved' })
+        .select('id').single()
+      if (usageErr || !usage) { setLoading(false); setMsg('Gagal potong saldo: ' + (usageErr?.message ?? 'coba lagi')); return }
+      usageId = (usage as any).id
+    }
     const { data: bentrok } = await supabase.from('bookings').select('id')
       .eq('unit_id', unitId).lte('tgl_mulai', tglSelesai).gte('tgl_selesai', tglMulai).limit(1)
     if (bentrok && bentrok.length > 0) {
       setLoading(false)
-      setMsg('Ups, tanggal ini udah kebokingan. Coba unit lain atau tanggal lain ya 😊')
+      if (usageId) await supabase.from('topups').insert({ phone: waNorm, nama: nama.trim(), nominal: total, status: 'approved' })
+      setMsg('Ups, tanggal ini udah kebokingan. Saldo dikembalikan otomatis 😊')
       setStep(1)
       return
     }
@@ -98,21 +123,24 @@ function SewaWizard() {
       tgl_mulai: tglMulai, tgl_selesai: tglSelesai, total,
       metode_bayar: metode, catatan: catatan.trim() || null,
     })
+    const refund = async () => {
+      if (usageId) await supabase.from('topups').insert({ phone: waNorm, nama: nama.trim(), nominal: total, status: 'approved' })
+    }
     if (error && (error.message.includes('metode_bayar') || error.message.includes('catatan') || error.message.includes('column'))) {
       // Fallback: DB belum migrasi kolom baru — simpan tanpa metode/catatan
       const retry = await supabase.from('bookings').insert({
         unit_id: unitId, nama: nama.trim(), wa: waNorm, paket,
         tgl_mulai: tglMulai, tgl_selesai: tglSelesai, total,
       })
-      if (retry.error) { setLoading(false); setMsg('Gagal menyimpan: ' + retry.error.message); return }
-    } else if (error) { setLoading(false); setMsg('Gagal menyimpan: ' + error.message); return }
+      if (retry.error) { setLoading(false); await refund(); setMsg('Gagal menyimpan: ' + retry.error.message + (usageId ? ' (saldo dikembalikan)' : '')); return }
+    } else if (error) { setLoading(false); await refund(); setMsg('Gagal menyimpan: ' + error.message + (usageId ? ' (saldo dikembalikan)' : '')); return }
     setLoading(false)
     // Notif WA ke admin — fire & forget, booking sudah aman tersimpan
     fetch('/api/notify-booking', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ unit_id: unitId, nama: nama.trim(), wa: waNorm, paket, tgl_mulai: tglMulai, tgl_selesai: tglSelesai, total, metode }),
     }).catch(() => {})
-    const metodeLabel = metode === 'qris' ? 'QRIS' : 'COD/Tunai (bayar di tempat)'
+    const metodeLabel = metode === 'qris' ? 'QRIS' : metode === 'saldo' ? 'Saldo member' : 'COD/Tunai (bayar di tempat)'
     const teks = `Halo min Rental Sedulur, mau sewa ${unitId} paket ${paket} ${tglMulai} s/d ${tglSelesai} a/n ${nama.trim()} Total Rp ${total.toLocaleString('id-ID')} Metode: ${metodeLabel}${catatan ? ` (Catatan: ${catatan})` : ''}`
     window.open(`https://wa.me/${WA_OWNER}?text=${encodeURIComponent(teks)}`, '_blank')
     setDone(true)
@@ -242,8 +270,8 @@ function SewaWizard() {
                 {catatan && <div className="flex justify-between"><span className="text-[#64748B]">Catatan</span><b>{catatan}</b></div>}
                 <div className="flex justify-between pt-2" style={{ borderTop: '1px dashed #CBD5E1' }}><span className="text-[#64748B]">Total bayar</span><b className="text-lg" style={{ color: '#7C3AED' }}>Rp {total.toLocaleString('id-ID')}</b></div>
               </div>
-              <p className="font-semibold">Pilih cara bayar 💰</p>
-              <div className="grid grid-cols-2 gap-2">
+              <p className="font-semibold">Pilih cara bayar 💰{saldo > 0 && <span className="font-normal text-xs text-[#64748B]"> • Saldo: Rp {saldo.toLocaleString('id-ID')}</span>}</p>
+              <div className="grid grid-cols-3 gap-2">
                 <button type="button" onClick={() => setMetode('qris')}
                   className="p-3 rounded-xl border-2 text-sm font-semibold transition"
                   style={metode === 'qris' ? { borderColor: '#7C3AED', background: '#F5F3FF' } : { borderColor: '#E2E8F0', background: '#fff' }}>
@@ -254,6 +282,11 @@ function SewaWizard() {
                   style={metode === 'cod' ? { borderColor: '#10B981', background: '#ECFDF5' } : { borderColor: '#E2E8F0', background: '#fff' }}>
                   💵 COD / Tunai<br /><span className="text-xs font-normal text-[#64748B]">Bayar saat unit datang</span>
                 </button>
+                <button type="button" disabled={saldo < total || total === 0} onClick={() => setMetode('saldo')}
+                  className="p-3 rounded-xl border-2 text-sm font-semibold transition disabled:opacity-40"
+                  style={metode === 'saldo' ? { borderColor: '#FF69B4', background: '#FFF1F2' } : { borderColor: '#E2E8F0', background: '#fff' }}>
+                  💜 Saldo<br /><span className="text-xs font-normal text-[#64748B]">{saldo >= total && total > 0 ? `Rp ${saldo.toLocaleString('id-ID')}` : 'Belum cukup / login dulu'}</span>
+                </button>
               </div>
               {metode === 'qris' ? (
                 <div className="rounded-xl p-5 text-center" style={{ background: 'linear-gradient(135deg, #F5F3FF 0%, #E0F7FF 100%)', border: '2px dashed #7C3AED' }}>
@@ -262,6 +295,12 @@ function SewaWizard() {
                   <img src="/qris-sedulur-ps.jpg" alt="QRIS Sedulur PS" className="mx-auto mt-3 w-52 rounded-xl bg-white" style={{ border: '2px solid #C0C0C0' }} />
                   <p className="text-xs text-[#64748B] mt-3">Scan pakai aplikasi apa saja (GoPay / OVO / DANA / m-banking).<br />Klik tombol di bawah, lalu kirim bukti bayar lewat WA yang kebuka otomatis ya 😊</p>
                 </div>
+              ) : metode === 'saldo' ? (
+                <div className="rounded-xl p-5 text-center" style={{ background: '#FFF1F2', border: '2px dashed #FF69B4' }}>
+                  <p className="font-bold">💜 Bayar Potong Saldo</p>
+                  <p className="font-bold text-2xl mt-1" style={{ color: '#FF1493' }}>Rp {total.toLocaleString('id-ID')}</p>
+                  <p className="text-xs text-[#64748B] mt-3">Saldo sekarang Rp {saldo.toLocaleString('id-ID')} → sisa Rp {(saldo - total).toLocaleString('id-ID')}.<br />Dipotong otomatis saat booking tersimpan 😊</p>
+                </div>
               ) : (
                 <div className="rounded-xl p-5 text-center" style={{ background: '#ECFDF5', border: '2px dashed #10B981' }}>
                   <p className="font-bold">💵 Bayar Tunai di Tempat</p>
@@ -269,8 +308,8 @@ function SewaWizard() {
                   <p className="text-xs text-[#64748B] mt-3">Siapkan uang pas saat unit diantar.<br />Tanpa DP — admin konfirmasi via WA setelah kamu klik tombol di bawah 😊</p>
                 </div>
               )}
-              <button disabled={loading} onClick={submit} className="w-full text-white py-3.5 rounded-xl font-semibold disabled:opacity-60" style={{ background: metode === 'qris' ? 'linear-gradient(180deg, #8B5CF6 0%, #7C3AED 100%)' : 'linear-gradient(180deg, #2ED47A 0%, #1DA851 100%)', border: '2px solid #C0C0C0' }}>
-                {loading ? 'Menyimpan...' : metode === 'qris' ? '✦ Saya Sudah Bayar via QRIS ✦' : '✦ Booking COD — Bayar di Tempat ✦'}
+              <button disabled={loading} onClick={submit} className="w-full text-white py-3.5 rounded-xl font-semibold disabled:opacity-60" style={{ background: metode === 'qris' ? 'linear-gradient(180deg, #8B5CF6 0%, #7C3AED 100%)' : metode === 'saldo' ? 'linear-gradient(135deg, #FF69B4, #7C3AED)' : 'linear-gradient(180deg, #2ED47A 0%, #1DA851 100%)', border: '2px solid #C0C0C0' }}>
+                {loading ? 'Menyimpan...' : metode === 'qris' ? '✦ Saya Sudah Bayar via QRIS ✦' : metode === 'saldo' ? '✦ Bayar Pakai Saldo ✦' : '✦ Booking COD — Bayar di Tempat ✦'}
               </button>
               <div className="flex gap-2">
                 <button onClick={() => setStep(2)} className="flex-1 py-3 rounded-xl font-semibold bg-white text-sm" style={{ border: '2px solid #C0C0C0' }}>← Ubah data</button>
