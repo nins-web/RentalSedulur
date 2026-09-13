@@ -49,6 +49,10 @@ function BookingForm(){
     const {error} = await supabase.from('bookings').insert({unit_id:unitId,nama,wa,paket,tgl_mulai:tglMulai,tgl_selesai:tglSelesai,total,metode_bayar:metode})
     setLoading(false)
     if(error) return setMsg('Gagal: '+error.message)
+    fetch('/api/notify-booking', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ unit_id: unitId, nama, wa, paket, tgl_mulai: tglMulai, tgl_selesai: tglSelesai, total, metode }),
+    }).catch(() => {})
     const teks = `Halo min Rental Sedulur, mau sewa ${unitId} paket ${paket} ${tglMulai} s/d ${tglSelesai} a/n ${nama} Total Rp ${total.toLocaleString('id-ID')} via ${bayar}`
     window.open(`https://wa.me/6281289538855?text=${encodeURIComponent(teks)}`,'_blank')
     setMsg('Booking tersimpan! Membuka WA...')

@@ -107,6 +107,11 @@ function SewaWizard() {
       if (retry.error) { setLoading(false); setMsg('Gagal menyimpan: ' + retry.error.message); return }
     } else if (error) { setLoading(false); setMsg('Gagal menyimpan: ' + error.message); return }
     setLoading(false)
+    // Notif WA ke admin — fire & forget, booking sudah aman tersimpan
+    fetch('/api/notify-booking', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ unit_id: unitId, nama: nama.trim(), wa: waNorm, paket, tgl_mulai: tglMulai, tgl_selesai: tglSelesai, total, metode }),
+    }).catch(() => {})
     const metodeLabel = metode === 'qris' ? 'QRIS' : 'COD/Tunai (bayar di tempat)'
     const teks = `Halo min Rental Sedulur, mau sewa ${unitId} paket ${paket} ${tglMulai} s/d ${tglSelesai} a/n ${nama.trim()} Total Rp ${total.toLocaleString('id-ID')} Metode: ${metodeLabel}${catatan ? ` (Catatan: ${catatan})` : ''}`
     window.open(`https://wa.me/${WA_OWNER}?text=${encodeURIComponent(teks)}`, '_blank')
