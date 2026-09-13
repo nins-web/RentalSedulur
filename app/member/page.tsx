@@ -18,6 +18,10 @@ export default function Member() {
   const [wa, setWa] = useState('')
   const [rows, setRows] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
+  const [topups, setTopups] = useState<any[]>([])
+  const [showTopup, setShowTopup] = useState(false)
+  const [nominal, setNominal] = useState(100000)
+  const [topupMsg, setTopupMsg] = useState('')
 
   useEffect(() => {
     const n = localStorage.getItem('member_nama') ?? ''
@@ -27,7 +31,22 @@ export default function Member() {
     supabase.from('bookings').select('id,unit_id,paket,tgl_mulai,tgl_selesai,total,status')
       .in('wa', waVariants(w)).order('tgl_mulai', { ascending: false }).limit(20)
       .then(({ data }: any) => { if (data) setRows(data); setLoading(false) })
+    supabase.from('topups').select('nominal,status')
+      .in('phone', waVariants(w)).order('created_at', { ascending: false }).limit(20)
+      .then(({ data }: any) => { if (data) setTopups(data) })
   }, [])
+
+  const saldo = topups.filter(t => t.status === 'approved').reduce((a, t) => a + Number(t.nominal), 0)
+  const pendingTopup = topups.some(t => t.status === 'pending')
+
+  async function ajukanTopup() {
+    setTopupMsg('')
+    const { error } = await supabase.from('topups').insert({ phone: wa, nama: nama || 'Member', nominal })
+    if (error) { setTopupMsg('Gagal: ' + error.message); return }
+    setTopupMsg('Request terkirim! Bayar via QRIS di bawah lalu konfirmasi WA ya 😊')
+    supabase.from('topups').select('nominal,status').in('phone', waVariants(wa)).order('created_at', { ascending: false }).limit(20)
+      .then(({ data }: any) => { if (data) setTopups(data) })
+  }
 
   if (!loading && !wa) {
     return (
@@ -57,6 +76,39 @@ export default function Member() {
           </div>
           <a href="/sewa" className="text-white text-sm px-4 py-2 rounded-xl font-semibold shrink-0" style={{ background: 'linear-gradient(180deg, #8B5CF6 0%, #7C3AED 100%)', border: '1px solid #C0C0C0' }}>+ Sewa</a>
         </div>
+
+        <div className="mt-4 rounded-[16px] p-5 flex items-center gap-4 text-white" style={{ background: 'linear-gradient(135deg, #7C3AED, #00FFFF)', border: '2px solid #C0C0C0' }}>
+          <div className="flex-1">
+            <p className="text-xs opacity-80">SALDO KAMU</p>
+            <p className="font-display text-3xl">Rp {saldo.toLocaleString('id-ID')}</p>
+            {pendingTopup && <p className="text-xs mt-1 opacity-90">⏳ Ada top-up menunggu persetujuan admin</p>}
+          </div>
+          <button onClick={() => { setShowTopup(!showTopup); setTopupMsg('') }} className="bg-white text-[#0F172A] text-sm px-5 py-2.5 rounded-xl font-bold shrink-0" style={{ border: '2px solid #C0C0C0' }}>+ Top Up</button>
+        </div>
+
+        {showTopup && (
+          <div className="mt-3 bg-white rounded-[16px] p-5" style={{ border: '2px solid #C0C0C0' }}>
+            <p className="font-bold">Pilih nominal</p>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {[50000, 100000, 200000, 500000].map(v => (
+                <button key={v} onClick={() => setNominal(v)} className="p-3 rounded-xl border-2 text-sm font-bold transition"
+                  style={nominal === v ? { borderColor: '#7C3AED', background: '#F5F3FF' } : { borderColor: '#E2E8F0', background: '#fff' }}>
+                  Rp {v.toLocaleString('id-ID')}
+                </button>
+              ))}
+            </div>
+            <button onClick={ajukanTopup} className="mt-3 w-full text-white py-3 rounded-xl font-semibold" style={{ background: 'linear-gradient(180deg, #8B5CF6 0%, #7C3AED 100%)', border: '2px solid #C0C0C0' }}>
+              Ajukan Top Up Rp {nominal.toLocaleString('id-ID')}
+            </button>
+            {topupMsg && (
+              <div className="mt-3 rounded-xl p-4 text-center" style={{ background: '#F5F3FF', border: '2px dashed #7C3AED' }}>
+                <p className="text-sm font-semibold">{topupMsg}</p>
+                <img src="/qris-sedulur-ps.jpg" alt="QRIS" className="mx-auto mt-3 w-44 rounded-xl bg-white" style={{ border: '2px solid #C0C0C0' }} />
+                <a href={`https://wa.me/6281289538855?text=${encodeURIComponent(`Halo min, saya ${nama || 'member'} (${wa}) sudah top up Rp ${nominal.toLocaleString('id-ID')}, mohon dicek ya`)}`} target="_blank" className="mt-3 inline-block text-white text-sm px-5 py-2 rounded-xl font-semibold" style={{ background: 'linear-gradient(180deg, #2ED47A 0%, #1DA851 100%)', border: '1px solid #C0C0C0' }}>Konfirmasi via WA</a>
+              </div>
+            )}
+          </div>
+        )}
 
         <h2 className="font-display text-xl mt-6">RIWAYAT SEWA <span className="text-[#7C3AED]">({rows.length})</span></h2>
         {loading ? (

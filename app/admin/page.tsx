@@ -1,11 +1,13 @@
 import { supabase } from '@/lib/supabase'
 import AdminActions from './actions'
+import TopupActions from './topup-actions'
 import RefreshButton from './refresh'
 export const revalidate = 0
 export default async function Admin(){
   const {data: bookings} = await supabase.from('bookings').select('*, units(id,tipe)').order('created_at',{ascending:false}).limit(100)
   const {data: units} = await supabase.from('units').select('id')
   const {data: feedbacks} = await supabase.from('feedbacks').select('*').order('created_at',{ascending:false}).limit(50)
+  const {data: topups} = await supabase.from('topups').select('*').order('created_at',{ascending:false}).limit(50)
   return (
     <main className="min-h-screen bg-[#F8FAFC] relative overflow-hidden">
       <div className="h-2 w-full" style={{background: 'linear-gradient(90deg, #FF69B4, #00FFFF, #7C3AED, #FF69B4)'}} />
@@ -42,6 +44,22 @@ export default async function Admin(){
             </div>
           ))}
           {(!bookings||bookings.length===0) && <p className="text-center py-12 rounded-[16px] bg-white" style={{border: '2px solid #C0C0C0', color: '#64748B'}}>Belum ada booking — Y2K siap untuk semua kalangan ✦</p>}
+        </div>
+
+        <h2 className="mt-8 text-xl font-display text-[#0F172A]">Top-Up Masuk ({(topups||[]).filter((t:any)=>t.status==='pending').length} pending)</h2>
+        <div className="mt-4 space-y-3">
+          {(topups||[]).map((t:any)=>(
+            <div key={t.id} className="bg-white p-4 rounded-[16px] flex flex-col md:flex-row md:justify-between gap-3" style={{border: '2px solid #C0C0C0'}}>
+              <div>
+                <div className="font-bold text-sm text-[#0F172A]">Rp {Number(t.nominal).toLocaleString('id-ID')} • {t.nama} ({t.phone}) • <span className="capitalize">{t.status}</span></div>
+                <div className="text-xs text-[#94A3B8] mt-1">{new Date(t.created_at).toLocaleString('id-ID')}</div>
+              </div>
+              <div className="flex gap-2 h-fit">
+                {t.status==='pending' ? <TopupActions id={t.id} /> : <span className="text-xs font-bold text-[#64748B]">{t.status==='approved'?'✓ Disetujui':'✕ Ditolak'}</span>}
+              </div>
+            </div>
+          ))}
+          {(!topups||topups.length===0) && <p className="text-center py-8 rounded-[16px] bg-white text-sm" style={{border: '2px solid #C0C0C0', color: '#64748B'}}>Belum ada request top-up</p>}
         </div>
 
         <h2 className="mt-8 text-xl font-display text-[#0F172A]">Kritik & Saran Masuk ({(feedbacks||[]).length})</h2>
